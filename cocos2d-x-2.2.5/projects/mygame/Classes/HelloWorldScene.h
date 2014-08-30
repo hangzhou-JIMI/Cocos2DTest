@@ -38,14 +38,17 @@ public:
     void onButtonTest( cocos2d::CCObject * pSender ,
                       cocos2d::extension::CCControlEvent pCCControlEvent );
     
+    void OnImgButtonTest( cocos2d::CCObject * psender , cocos2d::extension::CCControlEvent pEvent );
+    
     // a selector callback
-    void menuCloseCallback(CCObject* pSender);
+    void menuCloseCallback(cocos2d::CCObject * pSender , cocos2d::extension::CCControlEvent pCCControlEvent );
     
     // implement the "static node()" method manually
     //CREATE_FUNC(HelloWorld);
     
 private:
     cocos2d::CCLabelTTF * helloLabel;
+    cocos2d::CCMenuItemImage * itemImg;
 };
 
 //

@@ -15,8 +15,14 @@ CCScene* HelloWorld::scene()
     lib->registerCCNodeLoader("HelloWorld", HelloWorldLayerLoader::loader());
     CCBReader * reader = new CCBReader(lib);
     //reader->setCCBRootPath("ccb");
-    CCNode * node = reader->readNodeGraphFromFile("MainScene.ccbi",scene);
+    //scene = reader->createSceneWithNodeGraphFromFile("MainScene.ccbi");
+    CCNode * node = reader->readNodeGraphFromFile("MainScene.ccbi");
+//    CCNode * node2 = reader->readNodeGraphFromFile("ccbi/test.ccbi");
     
+    //CCMenuItemImage * imgButton = (CCMenuItemImage *)node->getChildByTag(12);
+    //imgButton->setTarget(imgButton, HelloWorld::onButtonTest);
+    CCLabelTTF * llab = (CCLabelTTF *)node->getChildByTag(11);
+    llab->setString("llab is now");
     //layer->addChild(node);
     reader->autorelease();
     
@@ -28,6 +34,11 @@ CCScene* HelloWorld::scene()
         // add layer as a child to scene
         scene->addChild(node);
     }
+//    if(node2 != NULL)
+//    {
+//        CCLog("test node2");
+//        scene->addChild(node2);
+//    }
     // return the scene
     return scene;
 }
@@ -49,6 +60,7 @@ bool HelloWorld::onAssignCCBMemberVariable( cocos2d::CCObject * pTarget ,
 {
     CCLog("test4");
     CCB_MEMBERVARIABLEASSIGNER_GLUE(this, "helloLabel", CCLabelTTF *, this->helloLabel);
+    //this->itemImg->setTarget(this, menuCloseCallback);
     return true;
 }
 
@@ -56,6 +68,7 @@ cocos2d::SEL_MenuHandler HelloWorld::onResolveCCBCCMenuItemSelector( cocos2d::CC
                                                         const char * pSelectorName)
 {
     CCLog("test6");
+    CCB_SELECTORRESOLVER_CCMENUITEM_GLUE(this, "imgButton", HelloWorld::OnImgButtonTest);
     return NULL;
 }
 
@@ -70,6 +83,7 @@ void HelloWorld::onNodeLoaded(cocos2d::CCNode * pNode , cocos2d::extension::CCNo
 {
     CCLog("test1");
     this->helloLabel->setString("it is in the loader event.");
+    
 }
 
 
@@ -77,6 +91,12 @@ void HelloWorld::onButtonTest(cocos2d::CCObject *pSender, cocos2d::extension::CC
 {
     CCLog("test7");
     this->helloLabel->setString("hello this is a test label.");
+    
+    cocos2d::CCLabelTTF * lab = CCLabelTTF::create("test1", this->helloLabel->getFontName(), this->helloLabel->getFontSize());
+    CCPoint  po = ccp(rand()%1000,rand()%1000);
+    CCLog("x:%f y:%f",po.x , po.y );
+    lab->setPosition( po );
+    this->addChild(lab);
 }
 
 //// on "init" you need to initialize your instance
@@ -142,9 +162,44 @@ void HelloWorld::onButtonTest(cocos2d::CCObject *pSender, cocos2d::extension::CC
 //    return true;
 //}
 
-
-void HelloWorld::menuCloseCallback(CCObject* pSender)
+void HelloWorld::OnImgButtonTest( cocos2d::CCObject * psender , cocos2d::extension::CCControlEvent pEvent )
 {
+    CCDirector* pDirector = CCDirector::sharedDirector();
+    
+    CCNodeLoaderLibrary * lib = CCNodeLoaderLibrary::newDefaultCCNodeLoaderLibrary();
+    CCBReader * reader = new CCBReader(lib);
+    CCNode * node2 = reader->readNodeGraphFromFile("ccbi/test.ccbi",this);
+    reader->release();
+    //cocos2d::CCScene * scene = CCScene::create();
+    CCLog("test img button 1 ===================");
+    if(node2 != NULL)
+    {
+        CCLog("test node2");
+        //scene->addChild(node2);
+        node2->setPosition(ccp(rand()%400,rand()%500));
+    }
+    
+    CCScene * curScene = pDirector->getRunningScene();
+    //curScene->removeChild(this, true);
+    this->removeFromParent();
+    curScene->addChild(node2, rand()%100);
+    CCLabelTTF * lab1 = CCLabelTTF::create();
+    lab1->setString("test1");
+    CCLabelTTF * lab2 = CCLabelTTF::create();
+    lab2->setString("test2");
+    //
+    //curScene->addChild(node2);
+    //pDirector->replaceScene(scene);
+    
+    CCLog("test img button");
+    
+    //this->setParent(NULL);
+    //this->release();
+}
+
+void HelloWorld::menuCloseCallback( cocos2d::CCObject * pSender , cocos2d::extension::CCControlEvent pCCControlEvent )
+{
+    //if(pCCControlEvent->)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
 	CCMessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
 #else

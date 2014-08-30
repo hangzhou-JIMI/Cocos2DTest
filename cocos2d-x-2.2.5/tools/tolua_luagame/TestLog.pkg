@@ -1,0 +1,9 @@
+
+
+
+
+class TestClass: public CCObject
+{
+public:
+	static void TestLog();
+};
